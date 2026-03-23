@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>safe-minds — Youth Mental Health AI Safety</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --bg2: #0e1318;
+    --bg3: #141b22;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8e6e0;
+    --muted: #7a8590;
+    --accent: #e8734a;
+    --accent2: #f0a07a;
+    --teal: #3cb8a0;
+    --teal2: #6ed4c0;
+    --red: #e05555;
+    --amber: #e0a840;
+    --green: #5ab87a;
+    --blue: #4a90d9;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.7;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(8,12,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--teal);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── SECTIONS ── */
+  section { padding: 100px 48px; max-width: 1100px; margin: 0 auto; }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding-top: 140px;
+    max-width: 100%;
+    padding-left: 10vw;
+    padding-right: 10vw;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--teal);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block; width: 32px; height: 1px;
+    background: var(--teal);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(52px, 7vw, 96px);
+    line-height: 1.05;
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent2);
+  }
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    max-width: 580px;
+    margin: 28px 0 48px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+  .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: 1px solid var(--accent);
+  }
+  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border2);
+  }
+  .btn-ghost:hover { border-color: var(--text); background: rgba(255,255,255,0.04); }
+
+  /* Noise texture overlay */
+  #hero::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Ambient glow */
+  .glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .glow-1 { width: 600px; height: 400px; background: rgba(232,115,74,0.07); top: 10vh; right: 5vw; }
+  .glow-2 { width: 500px; height: 500px; background: rgba(60,184,160,0.05); bottom: 10vh; left: 0; }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 80px;
+  }
+  .stat {
+    background: var(--bg2);
+    padding: 32px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 400;
+    color: #fff;
+    display: block;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* ── SECTION HEADING ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--teal);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::before {
+    content: ''; display: inline-block;
+    width: 20px; height: 1px; background: var(--teal);
+  }
+  h2 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  h2 em { font-style: italic; color: var(--accent2); }
+  .section-desc {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.8;
+  }
+
+  /* ── PIPELINE ── */
+  #pipeline { background: var(--bg2); max-width: 100%; padding: 100px 10vw; }
+  .pipeline-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    gap: 0;
+    margin-top: 60px;
+  }
+  .pipeline-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pipeline-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    border-radius: 16px 16px 0 0;
+  }
+  .pipeline-card.stage1::before { background: var(--teal); }
+  .pipeline-card.stage2::before { background: var(--accent); }
+  .stage-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .stage1 .stage-tag { color: var(--teal); }
+  .stage2 .stage-tag { color: var(--accent); }
+  .pipeline-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .pipeline-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .feature-list { list-style: none; }
+  .feature-list li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 6px 0;
+    display: flex; align-items: flex-start; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list li::before {
+    content: '→';
+    color: var(--teal);
+    font-size: 12px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .pipeline-arrow {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 24px;
+    color: var(--border2);
+    font-size: 24px;
+  }
+
+  /* ── RISK LEVELS ── */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 48px;
+  }
+  .risk-pill {
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid transparent;
+  }
+  .risk-label-text {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .risk-desc {
+    font-size: 11px;
+    line-height: 1.5;
+    opacity: 0.75;
+  }
+  .r-safe   { background: rgba(90,184,122,0.1);  border-color: rgba(90,184,122,0.25);  color: var(--green); }
+  .r-low    { background: rgba(74,144,217,0.1);  border-color: rgba(74,144,217,0.25);  color: var(--blue); }
+  .r-medium { background: rgba(224,168,64,0.1);  border-color: rgba(224,168,64,0.25);  color: var(--amber); }
+  .r-high   { background: rgba(232,115,74,0.1);  border-color: rgba(232,115,74,0.25);  color: var(--accent); }
+  .r-crisis { background: rgba(224,85,85,0.1);   border-color: rgba(224,85,85,0.25);   color: var(--red); }
+
+  /* ── TECH STACK ── */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 48px;
+  }
+  .stack-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .stack-card:hover { border-color: var(--border2); }
+  .stack-icon {
+    font-size: 22px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .stack-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .stack-detail {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── CODE DEMO ── */
+  .code-block {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+    margin-top: 48px;
+  }
+  .code-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #28ca42; }
+  .code-file { font-size: 12px; color: var(--muted); margin-left: auto; }
+  .kw  { color: #c792ea; }
+  .fn  { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .cm  { color: #546e7a; }
+  .num { color: #f78c6c; }
+  .cls { color: var(--teal2); }
+
+  /* ── HACKATHON ── */
+  .partners-row {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    margin-top: 40px;
+  }
+  .partner-badge {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* ── DEMO INTERACTIVE ── */
+  .demo-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-top: 48px;
+  }
+  .demo-input-row {
+    display: flex; gap: 12px; margin-bottom: 24px;
+  }
+  .demo-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .demo-input:focus { border-color: var(--border2); }
+  .demo-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .demo-btn:hover { background: var(--accent2); }
+  .demo-result {
+    display: none;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid;
+  }
+  .demo-result.show { display: block; }
+  .demo-risk-tag {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .demo-message {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .demo-examples {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 20px;
+  }
+  .demo-example {
+    font-size: 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+    font-family: var(--sans);
+  }
+  .demo-example:hover { border-color: var(--border2); color: var(--text); }
+
+  /* ── ABOUT / AUTHOR ── */
+  .about-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    display: flex; gap: 40px; align-items: flex-start;
+    margin-top: 48px;
+  }
+  .avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--accent));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    font-weight: 500;
+    color: #fff;
+    flex-shrink: 0;
+    font-family: var(--serif);
+  }
+  .about-name {
+    font-size: 20px; font-weight: 500; color: #fff; margin-bottom: 4px;
+  }
+  .about-role {
+    font-size: 13px; color: var(--teal); font-family: var(--mono);
+    letter-spacing: 0.06em; margin-bottom: 16px;
+  }
+  .about-bio {
+    font-size: 14px; color: var(--muted); line-height: 1.8;
+  }
+  .social-links { display: flex; gap: 12px; margin-top: 20px; }
+  .social-link {
+    font-size: 13px; color: var(--muted);
+    text-decoration: none; font-family: var(--mono);
+    transition: color 0.2s;
+  }
+  .social-link:hover { color: var(--teal); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 10vw;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--muted);
+  }
+  footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: var(--text); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  /* ── ANIM ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fadeUp { opacity: 0; animation: fadeUp 0.7s ease forwards; }
+  .d1 { animation-delay: 0.1s; }
+  .d2 { animation-delay: 0.25s; }
+  .d3 { animation-delay: 0.4s; }
+  .d4 { animation-delay: 0.55s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 72px 24px; }
+    #hero { padding: 120px 24px 72px; }
+    #pipeline { padding: 72px 24px; }
+    .pipeline-grid { grid-template-columns: 1fr; }
+    .pipeline-arrow { padding: 16px 0; transform: rotate(90deg); }
+    .stats-row { grid-template-columns: 1fr; }
+    .stack-grid { grid-template-columns: repeat(2, 1fr); }
+    .risk-grid { grid-template-columns: repeat(2, 1fr); }
+    .about-card { flex-direction: column; padding: 24px; gap: 20px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .demo-input-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">safe-minds</a>
+  <ul class="nav-links">
+    <li><a href="#pipeline">Pipeline</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#stack">Stack</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="https://github.com/GeorBelanger/safe-minds" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+
+  <div class="hero-eyebrow fadeUp d1">AI Safety · Youth Mental Health</div>
+  <h1 class="fadeUp d2">Detecting dark<br>thoughts in <em>youth</em><br>LLM interactions</h1>
+  <p class="hero-sub fadeUp d3">
+    A two-stage NLP pipeline — regex pre-filter + on-device language model —
+    that classifies risk in real-time, following Safe Messaging Guidelines from
+    Kids Help Phone and AFSP.
+  </p>
+  <div class="hero-ctas fadeUp d4">
+    <a href="https://github.com/GeorBelanger/safe-minds" target="_blank" rel="noopener" class="btn btn-primary">
+      View on GitHub ↗
+    </a>
+    <a href="#demo" class="btn btn-ghost">See it in action</a>
+  </div>
+
+  <div class="stats-row fadeUp d4">
+    <div class="stat">
+      <span class="stat-num">800K+</span>
+      <span class="stat-label">Youth contact KHP yearly</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">2-stage</span>
+      <span class="stat-label">Detection pipeline</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">On-device, no API key</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PIPELINE -->
+<section id="pipeline">
+  <div class="section-label">How it works</div>
+  <h2>A two-stage<br><em>detection pipeline</em></h2>
+  <p class="section-desc">
+    Stage 1 catches unambiguous crisis language in microseconds with zero compute cost.
+    Stage 2 handles nuance — context, tone, and passive ideation — using a local LLM.
+  </p>
+
+  <div class="pipeline-grid">
+    <div class="pipeline-card stage1">
+      <span class="stage-tag">Stage 1</span>
+      <div class="pipeline-title">Regex Pre-filter</div>
+      <p class="pipeline-desc">Pattern-based scan of the message. CRISIS hits fast-path directly to emergency response — no model call needed.</p>
+      <ul class="feature-list">
+        <li>Zero latency — runs in microseconds</li>
+        <li>No API cost, no internet required</li>
+        <li>3 severity tiers: CRISIS, HIGH, MEDIUM</li>
+        <li>CRISIS triggers instant safe response + crisis resources</li>
+      </ul>
+    </div>
+
+    <div class="pipeline-arrow">→</div>
+
+    <div class="pipeline-card stage2">
+      <span class="stage-tag">Stage 2</span>
+      <div class="pipeline-title">Phi-3-mini LLM</div>
+      <p class="pipeline-desc">Microsoft's Phi-3-mini (3.8B) runs locally on Apple Silicon via MPS. Handles nuance, context, and passive ideation regex can't catch.</p>
+      <ul class="feature-list">
+        <li>Fully on-device — no data leaves the machine</li>
+        <li>Structured JSON output: risk, confidence, reasoning</li>
+        <li>Conversation history for contextual assessment</li>
+        <li>Generates warm, age-appropriate safe responses</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Risk levels -->
+  <div class="section-label" style="margin-top: 64px;">Risk taxonomy</div>
+  <div class="risk-grid">
+    <div class="risk-pill r-safe">
+      <span class="risk-label-text">SAFE</span>
+      <span class="risk-desc">No indicators detected</span>
+    </div>
+    <div class="risk-pill r-low">
+      <span class="risk-label-text">LOW</span>
+      <span class="risk-desc">Mild distress, monitor</span>
+    </div>
+    <div class="risk-pill r-medium">
+      <span class="risk-label-text">MEDIUM</span>
+      <span class="risk-desc">Passive ideation, intervene</span>
+    </div>
+    <div class="risk-pill r-high">
+      <span class="risk-label-text">HIGH</span>
+      <span class="risk-desc">Active ideation, escalate</span>
+    </div>
+    <div class="risk-pill r-crisis">
+      <span class="risk-label-text">CRISIS</span>
+      <span class="risk-desc">Imminent danger, emergency</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DEMO -->
+<section id="demo" style="max-width: 1100px; margin: 0 auto;">
+  <div class="section-label">Live demo</div>
+  <h2>Try the <em>pre-filter</em></h2>
+  <p class="section-desc">
+    Type a message below to see Stage 1 classification in action (runs entirely in the browser).
+    The full Phi-3 model runs locally in Python.
+  </p>
+
+  <div class="demo-box">
+    <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Try an example:</p>
+    <div class="demo-examples">
+      <button class="demo-example" onclick="setDemo(this.textContent)">I've been feeling really down lately</button>
+      <button class="demo-example" onclick="setDemo(this.textContent)">I want to kill myself</button>
+      <button class="demo-example" onclick="setDemo(this.textContent)">nobody cares about me</button>
+      <button class="demo-example" onclick="setDemo(this.textContent)">what is machine learning?</button>
+      <button class="demo-example" onclick="setDemo(this.textContent)">I hate myself and feel worthless</button>
+    </div>
+    <div class="demo-input-row">
+      <input type="text" class="demo-input" id="demoInput" placeholder="Type a message to classify..." />
+      <button class="demo-btn" onclick="runDemo()">Classify →</button>
+    </div>
+    <div class="demo-result" id="demoResult">
+      <div class="demo-risk-tag" id="demoTag"></div>
+      <div class="demo-message" id="demoMsg"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- STACK -->
+<section id="stack" style="max-width: 1100px; margin: 0 auto;">
+  <div class="section-label">Technical stack</div>
+  <h2>Built for<br><em>production safety</em></h2>
+  <p class="section-desc">
+    Designed to run on any device, with full audit trails for regulatory review — 
+    aligned with EU AI Act requirements for high-risk AI in healthcare.
+  </p>
+
+  <div class="stack-grid">
+    <div class="stack-card">
+      <span class="stack-icon">🤗</span>
+      <div class="stack-name">Phi-3-mini · HuggingFace</div>
+      <p class="stack-detail">microsoft/Phi-3-mini-4k-instruct — 3.8B params, strong instruction-following, runs in float16 on Apple Silicon via MPS.</p>
+    </div>
+    <div class="stack-card">
+      <span class="stack-icon">🔒</span>
+      <div class="stack-name">100% On-device</div>
+      <p class="stack-detail">No data sent to external APIs. Model runs locally via PyTorch MPS backend — critical for HIPAA/PIPEDA-compliant deployments.</p>
+    </div>
+    <div class="stack-card">
+      <span class="stack-icon">📋</span>
+      <div class="stack-name">Audit-ready outputs</div>
+      <p class="stack-detail">Every assessment produces structured JSON: risk level, confidence, indicators, reasoning, model used, and UTC timestamp.</p>
+    </div>
+    <div class="stack-card">
+      <span class="stack-icon">⚡</span>
+      <div class="stack-name">Two-stage efficiency</div>
+      <p class="stack-detail">Regex pre-filter handles obvious cases at zero cost. LLM stage only fires when nuanced contextual reasoning is needed.</p>
+    </div>
+    <div class="stack-card">
+      <span class="stack-icon">🇨🇦</span>
+      <div class="stack-name">Canadian resources</div>
+      <p class="stack-detail">Crisis resources default to Kids Help Phone (1-800-668-6868) with US 988 Lifeline as fallback, configurable by region.</p>
+    </div>
+    <div class="stack-card">
+      <span class="stack-icon">📐</span>
+      <div class="stack-name">Safe Messaging Guidelines</div>
+      <p class="stack-detail">System prompt encodes AFSP / KHP guidelines. Model is instructed never to provide methods, and to always validate distress.</p>
+    </div>
+  </div>
+
+  <!-- Code snippet -->
+  <div class="code-block">
+    <div class="code-header">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <span class="code-file">detector.py</span>
+    </div>
+<span class="cm"># Two-stage assessment — fast-path CRISIS, LLM for nuance</span>
+<br><span class="kw">result</span> = <span class="fn">assess</span>(<span class="str">"I've been feeling really hopeless lately"</span>)
+<br>
+<br><span class="cm"># Structured output — audit-trail ready</span>
+<br><span class="kw">print</span>(result.<span class="fn">to_json</span>())
+<br>
+<br><span class="cm"># → {</span>
+<br><span class="cm">#     "risk_level": "MEDIUM",</span>
+<br><span class="cm">#     "confidence": 0.82,</span>
+<br><span class="cm">#     "indicators": ["hopeless"],</span>
+<br><span class="cm">#     "reasoning": "Message expresses hopelessness — soft intervention warranted.",</span>
+<br><span class="cm">#     "safe_response": "It sounds like things have been really hard lately. You're not alone.",</span>
+<br><span class="cm">#     "model_used": "microsoft/Phi-3-mini-4k-instruct",</span>
+<br><span class="cm">#     "assessed_at": "2025-04-01T14:32:00Z"</span>
+<br><span class="cm"># }</span>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HACKATHON -->
+<section style="max-width: 1100px; margin: 0 auto;">
+  <div class="section-label">Context</div>
+  <h2>Built at<br><em>Mila × KHP Hackathon</em></h2>
+  <p class="section-desc">
+    This project was developed for <em>Championing AI for Good: Building Safer AI for Youth Mental Health</em> —
+    a week-long initiative co-organized by Mila, Bell, Buzz HPC, and Kids Help Phone to
+    develop and stress-test AI safety solutions for youth-facing conversational systems.
+  </p>
+
+  <div class="partners-row">
+    <span class="partner-badge">Mila — Québec AI Institute</span>
+    <span class="partner-badge">Kids Help Phone</span>
+    <span class="partner-badge">Bell Canada</span>
+    <span class="partner-badge">Buzz HPC</span>
+  </div>
+
+  <div style="margin-top: 40px; padding: 28px; background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0;">
+    <p style="font-size: 15px; color: var(--text); line-height: 1.9; font-style: italic;">
+      "AI has a clear capacity to expand the reach of mental health professionals — yet this potential
+      is matched by equally significant risks. How do we ensure AI systems do not cause harm when
+      engaging with individuals in crisis?"
+    </p>
+    <p style="font-size: 13px; color: var(--muted); margin-top: 12px;">— Hackathon opening conference, Mila × KHP</p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ABOUT -->
+<section id="about" style="max-width: 1100px; margin: 0 auto;">
+  <div class="section-label">The builder</div>
+  <h2>About <em>the project</em></h2>
+  <p class="section-desc">
+    This project sits at the intersection of applied NLP, AI safety, and real-world mental health impact.
+  </p>
+
+  <div class="about-card">
+    <div class="avatar">G</div>
+    <div>
+      <div class="about-name">Georges Bélanger-Alba</div>
+      <div class="about-role">AI Governance · Applied NLP · Montreal</div>
+      <p class="about-bio">
+        Working at the intersection of AI governance, EU AI Act compliance, and practical LLM implementation.
+        Previously built AI risk classifiers and safety evaluation frameworks.
+        This project extends that work into high-stakes applied NLP — using open-source models
+        to protect vulnerable youth in real-time conversational systems.
+      </p>
+      <div class="social-links">
+        <a href="https://github.com/GeorBelanger" target="_blank" rel="noopener" class="social-link">github/GeorBelanger ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>safe-minds · Built for Mila × Kids Help Phone Hackathon · Montreal, 2025</span>
+  <div style="display:flex;gap:24px;">
+    <a href="https://github.com/GeorBelanger/safe-minds" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://kidshelpphone.ca" target="_blank" rel="noopener">Kids Help Phone</a>
+    <a href="https://mila.quebec" target="_blank" rel="noopener">Mila</a>
+  </div>
+</footer>
+
+<script>
+// ── Pre-filter demo (runs in browser) ──
+const CRISIS = [
+  /\b(kill\s+myself|end\s+my\s+life|suicide|suicidal)\b/i,
+  /\b(want\s+to\s+die|wish\s+i\s+was\s+dead|don.t\s+want\s+to\s+be\s+here)\b/i,
+  /\b(no\s+reason\s+to\s+live|life\s+isn.t\s+worth)\b/i,
+];
+const HIGH = [
+  /\b(hurt\s+myself|self.harm|cutting|overdose)\b/i,
+  /\b(nobody\s+cares|completely\s+alone|no\s+one\s+would\s+miss\s+me)\b/i,
+  /\b(can.t\s+take\s+it\s+anymore|everything\s+is\s+hopeless)\b/i,
+];
+const MEDIUM = [
+  /\b(hate\s+myself|worthless|useless|broken)\b/i,
+  /\b(don.t\s+see\s+a\s+point|nothing\s+matters|give\s+up)\b/i,
+  /\b(so\s+sad|deeply\s+depressed|really\s+struggling|feeling\s+down|really\s+hopeless|hopeless)\b/i,
+];
+
+const CONFIG = {
+  CRISIS: { bg:'rgba(224,85,85,0.1)', border:'rgba(224,85,85,0.3)', color:'#e05555',
+    msg:'🚨 CRISIS detected. Immediate resources required: Kids Help Phone 1-800-668-6868 · Text HELLO to 686868.' },
+  HIGH:   { bg:'rgba(232,115,74,0.1)', border:'rgba(232,115,74,0.3)', color:'#e8734a',
+    msg:'⚠️ HIGH risk — escalation recommended. Clinician or parent notification warranted.' },
+  MEDIUM: { bg:'rgba(224,168,64,0.1)', border:'rgba(224,168,64,0.3)', color:'#e0a840',
+    msg:'🔶 MEDIUM risk — soft intervention suggested. Warm check-in and resource sharing recommended.' },
+  SAFE:   { bg:'rgba(90,184,122,0.1)', border:'rgba(90,184,122,0.3)', color:'#5ab87a',
+    msg:'✓ SAFE — no risk indicators detected by pre-filter. Would pass to LLM stage for full contextual review.' },
+};
+
+function classify(text) {
+  if (CRISIS.some(p => p.test(text))) return 'CRISIS';
+  if (HIGH.some(p => p.test(text))) return 'HIGH';
+  if (MEDIUM.some(p => p.test(text))) return 'MEDIUM';
+  return 'SAFE';
+}
+
+function setDemo(text) {
+  document.getElementById('demoInput').value = text;
+  runDemo();
+}
+
+function runDemo() {
+  const text = document.getElementById('demoInput').value.trim();
+  if (!text) return;
+  const level = classify(text);
+  const cfg = CONFIG[level];
+  const result = document.getElementById('demoResult');
+  const tag = document.getElementById('demoTag');
+  const msg = document.getElementById('demoMsg');
+  result.style.background = cfg.bg;
+  result.style.borderColor = cfg.border;
+  tag.style.color = cfg.color;
+  tag.textContent = '● ' + level + ' — Stage 1 Pre-filter';
+  msg.style.color = '#c8c5be';
+  msg.textContent = cfg.msg;
+  result.classList.add('show');
+}
+
+document.getElementById('demoInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') runDemo();
+});
+
+// ── Scroll fade-in ──
+const observer = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('fadeUp'); }),
+  { threshold: 0.1 }
+);
+document.querySelectorAll('.stack-card, .pipeline-card, .risk-pill, .about-card, .demo-box, .code-block, .partner-badge')
+  .forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

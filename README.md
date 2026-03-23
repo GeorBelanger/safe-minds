@@ -167,7 +167,7 @@ If you or someone you know is in crisis:
 
 ## Author
 
-**Georges Bélanger-Alba** — AI Governance & Applied NLP · Montreal  
+**Georges Belanger Albarran** — AI Governance & Applied NLP · Montreal  
 [github.com/GeorBelanger](https://github.com/GeorBelanger)
 
 ---

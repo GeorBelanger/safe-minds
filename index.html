@@ -350,7 +350,7 @@
           </button>
         </div>
         <div class="triage-nav">
-          <span class="triage-progress">Step 1 of 3</span>
+          <span class="triage-progress">Step 1 of 5</span>
           <button class="triage-next" id="next1" onclick="goStep(2)" disabled>Next →</button>
         </div>
       </div>
@@ -379,7 +379,7 @@
         </div>
         <div class="triage-nav">
           <button class="triage-back" onclick="goStep(1)">← Back</button>
-          <span class="triage-progress">Step 2 of 3</span>
+          <span class="triage-progress">Step 2 of 5</span>
           <button class="triage-next" id="next2" onclick="goStep(3)" disabled>Next →</button>
         </div>
       </div>
@@ -408,8 +408,166 @@
         </div>
         <div class="triage-nav">
           <button class="triage-back" onclick="goStep(2)">← Back</button>
-          <span class="triage-progress">Step 3 of 3</span>
-          <button class="triage-next" id="next3" onclick="showTriageResult()" disabled>See resources →</button>
+          <span class="triage-progress">Step 3 of 5</span>
+          <button class="triage-next" id="next3" onclick="goStep(4)" disabled>Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Protective factors -->
+      <div class="triage-step" id="step4">
+        <div class="triage-question">What is holding them back from acting?</div>
+        <div class="triage-subtitle">Protective factors are a key part of risk assessment. Even small reasons for living can significantly reduce immediate risk. Select all that apply, or describe in your own words.</div>
+        <div class="triage-options" id="protectiveOptions">
+          <button class="triage-opt multi" onclick="toggleProtective(this, 'family')">
+            <span class="opt-icon">👨‍👩‍👧</span>
+            <div><div class="opt-label">Family or loved ones</div><div class="opt-desc">Fear of hurting or leaving someone behind</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleProtective(this, 'future')">
+            <span class="opt-icon">🌅</span>
+            <div><div class="opt-label">Hope for the future</div><div class="opt-desc">A goal, dream, or thing they're looking forward to</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleProtective(this, 'fear')">
+            <span class="opt-icon">😨</span>
+            <div><div class="opt-label">Fear of the act itself</div><div class="opt-desc">Pain, failure, or fear of what comes after</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleProtective(this, 'beliefs')">
+            <span class="opt-icon">🙏</span>
+            <div><div class="opt-label">Religious or moral beliefs</div><div class="opt-desc">Personal values that make it feel wrong</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleProtective(this, 'pet')">
+            <span class="opt-icon">🐾</span>
+            <div><div class="opt-label">A pet</div><div class="opt-desc">Responsibility or love for an animal</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleProtective(this, 'nothing')">
+            <span class="opt-icon">⬛</span>
+            <div><div class="opt-label">Nothing comes to mind</div><div class="opt-desc">Can't identify anything holding them back</div></div>
+          </button>
+        </div>
+
+        <!-- Other / open text -->
+        <div style="margin-top: 12px;">
+          <button class="triage-opt multi" id="otherToggleBtn" onclick="toggleOtherBox()" style="width:100%; margin-bottom: 0;">
+            <span class="opt-icon">✏️</span>
+            <div>
+              <div class="opt-label">Other — describe in your own words</div>
+              <div class="opt-desc">Sometimes the most important protective factor is something personal and hard to categorize</div>
+            </div>
+          </button>
+          <div id="otherBox" style="display:none; margin-top: 8px;">
+            <textarea id="otherText"
+              placeholder="e.g. 'They mentioned a concert they want to go to next month' or 'They said their little sister needs them'..."
+              style="width:100%; background:var(--bg3); border:1px solid var(--teal); border-radius:10px; padding:14px 16px; color:var(--text); font-family:var(--sans); font-size:14px; line-height:1.6; resize:vertical; min-height:90px; outline:none;"
+              oninput="handleOtherText()"
+            ></textarea>
+            <p style="font-size:12px; color:var(--teal); margin-top:6px; font-family:var(--mono);">↑ This will be included in the risk summary shown to a clinician or support worker.</p>
+          </div>
+        </div>
+
+        <div class="triage-nav" style="margin-top: 24px;">
+          <button class="triage-back" onclick="goStep(3)">← Back</button>
+          <span class="triage-progress">Step 4 of 5</span>
+          <button class="triage-next" id="next4" onclick="goStep(5)" disabled>Next →</button>
+        </div>
+      </div>
+
+      <!-- Step 5: Personal Resources -->
+      <div class="triage-step" id="step5">
+        <div class="triage-question">What resources does this person have in their life?</div>
+        <div class="triage-subtitle">
+          A <em>personal resource</em> is any internal strength, relationship, activity, or source of meaning that builds resilience and reasons for living. These are the forces that <em>pull toward life</em> — not just barriers to the act, but positive anchors. Select all that apply.
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;" id="resourceOptions">
+
+          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:4px 0 2px;">People &amp; belonging</div>
+          <button class="triage-opt multi" onclick="toggleResource(this,'close_friends')">
+            <span class="opt-icon">👥</span><div><div class="opt-label">Close friends</div><div class="opt-desc">People they trust and confide in</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'family_warmth')">
+            <span class="opt-icon">🏠</span><div><div class="opt-label">Warm family bond</div><div class="opt-desc">At least one family member they feel safe with</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'community')">
+            <span class="opt-icon">🌍</span><div><div class="opt-label">Community or belonging</div><div class="opt-desc">A team, group, neighbourhood, or culture</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'mentor')">
+            <span class="opt-icon">🤝</span><div><div class="opt-label">A mentor or trusted adult</div><div class="opt-desc">Teacher, coach, therapist, or elder</div></div>
+          </button>
+
+          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:12px 0 2px;">Joy &amp; flow</div>
+          <button class="triage-opt multi" onclick="toggleResource(this,'creative')">
+            <span class="opt-icon">🎨</span><div><div class="opt-label">Creative outlet</div><div class="opt-desc">Art, music, writing, cooking, building</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'movement')">
+            <span class="opt-icon">🏃</span><div><div class="opt-label">Movement or sport</div><div class="opt-desc">Exercise, dance, martial arts, yoga</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'nature')">
+            <span class="opt-icon">🌿</span><div><div class="opt-label">Nature &amp; outdoors</div><div class="opt-desc">Parks, animals, the outdoors calm them</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'play')">
+            <span class="opt-icon">🎮</span><div><div class="opt-label">Play &amp; humor</div><div class="opt-desc">Games, laughter, lightness — moments of fun</div></div>
+          </button>
+
+          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:12px 0 2px;">Meaning &amp; purpose</div>
+          <button class="triage-opt multi" onclick="toggleResource(this,'purpose')">
+            <span class="opt-icon">🌟</span><div><div class="opt-label">Sense of purpose</div><div class="opt-desc">A vocation, cause, or role that matters</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'spirituality')">
+            <span class="opt-icon">✨</span><div><div class="opt-label">Spirituality or faith</div><div class="opt-desc">Connection to something larger than oneself</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'helping')">
+            <span class="opt-icon">💛</span><div><div class="opt-label">Helping others</div><div class="opt-desc">Volunteering, caregiving, or being needed</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'curiosity')">
+            <span class="opt-icon">🔭</span><div><div class="opt-label">Curiosity &amp; learning</div><div class="opt-desc">A subject, skill, or question they're drawn to</div></div>
+          </button>
+
+          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:12px 0 2px;">Future &amp; hope</div>
+          <button class="triage-opt multi" onclick="toggleResource(this,'future_goal')">
+            <span class="opt-icon">🗓</span><div><div class="opt-label">A goal or dream</div><div class="opt-desc">Something they want to achieve or experience</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'anticipation')">
+            <span class="opt-icon">🎉</span><div><div class="opt-label">Something to look forward to</div><div class="opt-desc">An event, trip, reunion, or moment coming up</div></div>
+          </button>
+
+          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:12px 0 2px;">Inner strengths</div>
+          <button class="triage-opt multi" onclick="toggleResource(this,'resilience')">
+            <span class="opt-icon">💪</span><div><div class="opt-label">Resilience &amp; grit</div><div class="opt-desc">Has overcome hard things before</div></div>
+          </button>
+          <button class="triage-opt multi" onclick="toggleResource(this,'self_awareness')">
+            <span class="opt-icon">🪞</span><div><div class="opt-label">Self-awareness</div><div class="opt-desc">Can name their feelings and ask for help</div></div>
+          </button>
+
+        </div>
+
+        <!-- Other — open text (prominent) -->
+        <div style="margin-top: 4px;">
+          <button class="triage-opt multi" id="resourceOtherBtn" onclick="toggleResourceOther()" style="width:100%; background: rgba(60,184,160,0.05); border-color: rgba(60,184,160,0.25);">
+            <span class="opt-icon">✏️</span>
+            <div>
+              <div class="opt-label" style="color:var(--teal2);">Other — what's going well? What brings them joy?</div>
+              <div class="opt-desc">The most meaningful resource is often something deeply personal. Describe it here — this will appear in the summary for a clinician or support worker.</div>
+            </div>
+          </button>
+          <div id="resourceOtherBox" style="display:none; margin-top:8px;">
+            <textarea id="resourceOtherText"
+              placeholder="e.g. 'She lights up when she talks about her cat and her painting class' or 'He mentioned wanting to travel to Japan someday' or 'She's been volunteering at a shelter and feels needed there'..."
+              style="width:100%; background:var(--bg3); border:1px solid var(--teal); border-radius:10px; padding:14px 16px; color:var(--text); font-family:var(--sans); font-size:14px; line-height:1.6; resize:vertical; min-height:110px; outline:none;"
+              oninput="handleResourceOther()"
+            ></textarea>
+            <p style="font-size:12px; color:var(--teal); margin-top:6px; font-family:var(--mono);">↑ Included verbatim in the clinical summary.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:16px; padding:16px; background:rgba(60,184,160,0.05); border:1px solid rgba(60,184,160,0.15); border-radius:10px;">
+          <p style="font-size:13px; color:var(--muted); line-height:1.7;">
+            <span style="color:var(--teal2); font-weight:500;">Why this matters:</span> Research shows that identifying even one strong personal resource significantly improves outcomes. A single meaningful anchor — a song, a person, a dream — can be the thread a clinician or support worker pulls on to build a safety plan.
+          </p>
+        </div>
+
+        <div class="triage-nav" style="margin-top: 24px;">
+          <button class="triage-back" onclick="goStep(4)">← Back</button>
+          <span class="triage-progress">Step 5 of 5</span>
+          <button class="triage-next" id="next5" onclick="showTriageResult()">See resources →</button>
         </div>
       </div>
 
@@ -534,6 +692,9 @@ document.getElementById('quickInput').addEventListener('keydown',e=>{if(e.key===
 
 // ── Triage ──
 const answers = { freq: 0, intensity: 0, plan: 0 };
+const protective = new Set();
+let otherOpen = false;
+
 function selectOpt(btn, key, val) {
   btn.closest('.triage-options').querySelectorAll('.triage-opt').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
@@ -541,6 +702,74 @@ function selectOpt(btn, key, val) {
   const nextId = {freq:'next1', intensity:'next2', plan:'next3'}[key];
   document.getElementById(nextId).disabled = false;
 }
+
+// Multi-select for protective factors
+function toggleProtective(btn, key) {
+  // If "nothing" selected, deselect everything else
+  if (key === 'nothing') {
+    protective.clear();
+    document.querySelectorAll('#protectiveOptions .triage-opt').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    protective.add('nothing');
+  } else {
+    // Deselect "nothing" if it was selected
+    protective.delete('nothing');
+    document.querySelectorAll('#protectiveOptions .triage-opt').forEach(b=>{
+      if(b.textContent.includes('Nothing comes to mind')) b.classList.remove('selected');
+    });
+    if (protective.has(key)) {
+      protective.delete(key);
+      btn.classList.remove('selected');
+    } else {
+      protective.add(key);
+      btn.classList.add('selected');
+    }
+  }
+  updateNext4();
+}
+
+function toggleOtherBox() {
+  otherOpen = !otherOpen;
+  document.getElementById('otherBox').style.display = otherOpen ? 'block' : 'none';
+  document.getElementById('otherToggleBtn').classList.toggle('selected', otherOpen);
+  if (otherOpen) document.getElementById('otherText').focus();
+  else { document.getElementById('otherText').value = ''; protective.delete('other'); }
+  updateNext4();
+}
+
+function handleOtherText() {
+  const val = document.getElementById('otherText').value.trim();
+  if (val.length > 0) protective.add('other'); else protective.delete('other');
+  updateNext4();
+}
+
+function updateNext4() {
+  const hasSelection = protective.size > 0 || (otherOpen && document.getElementById('otherText').value.trim().length > 0);
+  document.getElementById('next4').disabled = !hasSelection;
+}
+
+// Resources (step 5)
+const resources = new Set();
+let resourceOtherOpen = false;
+
+function toggleResource(btn, key) {
+  if (resources.has(key)) { resources.delete(key); btn.classList.remove('selected'); }
+  else { resources.add(key); btn.classList.add('selected'); }
+}
+
+function toggleResourceOther() {
+  resourceOtherOpen = !resourceOtherOpen;
+  document.getElementById('resourceOtherBox').style.display = resourceOtherOpen ? 'block' : 'none';
+  document.getElementById('resourceOtherBtn').classList.toggle('selected', resourceOtherOpen);
+  if (resourceOtherOpen) document.getElementById('resourceOtherText').focus();
+  else { document.getElementById('resourceOtherText').value = ''; resources.delete('res_other'); }
+}
+
+function handleResourceOther() {
+  const val = document.getElementById('resourceOtherText').value.trim();
+  if (val.length > 0) resources.add('res_other'); else resources.delete('res_other');
+}
+
 function goStep(n) {
   document.querySelectorAll('.triage-step').forEach(s=>s.classList.remove('active'));
   document.getElementById('triageResult').classList.remove('show');
@@ -553,15 +782,43 @@ function showTriageResult() {
   const planVal = answers.plan;
   const intVal  = answers.intensity;
 
+  // Protective factor score: 0 = nothing, 1-2 = weak, 3+ = strong
+  const noProtection = protective.has('nothing');
+  const protScore = noProtection ? 0 : protective.size;
+  const otherText = document.getElementById('otherText').value.trim();
+
+  // Build protective factor summary line
+  const labelMap = { family:'family or loved ones', future:'hope for the future', fear:'fear of the act itself', beliefs:'religious/moral beliefs', pet:'a pet', other: otherText ? `"${otherText}"` : 'other (described)' };
+  const protList = [...protective].filter(k=>k!=='nothing').map(k=>labelMap[k]||k);
+  const protSummary = noProtection
+    ? '<span style="color:var(--red);">⚠️ No protective factors identified — this significantly increases risk.</span>'
+    : protList.length > 0
+      ? `<span style="color:var(--green);">✓ Protective factors present: ${protList.join(', ')}.</span>`
+      : '';
+
   let level, html;
 
-  // EMERGENCY: specific plan OR (intensity crisis) OR score >= 10
-  if (planVal >= 3 || intVal >= 4 || score >= 10) {
+  // Resource summary
+  const resourceLabelMap = {
+    close_friends:'close friends', family_warmth:'warm family bond', community:'community/belonging',
+    mentor:'a mentor or trusted adult', creative:'creative outlet', movement:'movement/sport',
+    nature:'nature & outdoors', play:'play & humor', purpose:'sense of purpose',
+    spirituality:'spirituality/faith', helping:'helping others', curiosity:'curiosity & learning',
+    future_goal:'a goal or dream', anticipation:'something to look forward to',
+    resilience:'resilience & grit', self_awareness:'self-awareness',
+  };
+  const resOtherText = document.getElementById('resourceOtherText').value.trim();
+  const resList = [...resources].filter(k=>k!=='res_other').map(k=>resourceLabelMap[k]||k);
+  if (resOtherText) resList.push(`"${resOtherText}"`);
+  const resSummary = resList.length > 0
+    ? `<div style="margin-top:14px; padding:14px 18px; background:rgba(60,184,160,0.07); border:1px solid rgba(60,184,160,0.2); border-radius:10px; font-size:13px; color:var(--teal2); line-height:1.7;"><strong style="color:var(--teal);">🌱 Personal resources identified:</strong> ${resList.join(' · ')}</div>`
+    : `<div style="margin-top:14px; padding:14px 18px; background:rgba(224,85,85,0.06); border:1px solid rgba(224,85,85,0.2); border-radius:10px; font-size:13px; color:var(--red); line-height:1.7;">No personal resources identified — this is clinically significant. The safety plan conversation should start here: finding even one small anchor.</div>`;
+  if (planVal >= 3 || intVal >= 4 || score >= 10 || (score >= 7 && noProtection)) {
     level = 'IMMINENT';
     html = `
       <div class="triage-level-badge" style="color:var(--red);border-color:rgba(224,85,85,0.4);background:rgba(224,85,85,0.08);">🚨 URGENCE IMMÉDIATE</div>
       <div class="triage-heading">Emergency response required</div>
-      <div class="triage-body">Based on the frequency, intensity, and presence of a plan, this situation requires immediate emergency intervention. Do not leave the person alone. Call 911 or go directly to a psychiatric emergency room now.</div>
+      <div class="triage-body">Based on the frequency, intensity, presence of a plan, and protective factors, this situation requires immediate emergency intervention. Do not leave the person alone. Call 911 or go directly to a psychiatric emergency room now.<br><br>${protSummary}${resSummary}</div>
       <div class="resource-cards">
         <div class="resource-card primary">
           <span class="resource-icon">🚑</span>
@@ -603,7 +860,7 @@ function showTriageResult() {
     html = `
       <div class="triage-level-badge" style="color:var(--accent);border-color:rgba(232,115,74,0.4);background:rgba(232,115,74,0.08);">⚠️ INTERVENTION URGENTE</div>
       <div class="triage-heading">Crisis intervention recommended</div>
-      <div class="triage-body">The frequency and intensity of these thoughts indicate a high-risk situation. A crisis counsellor or mobile intervention team should be contacted now. These services can come to you, or provide immediate telephone support.</div>
+      <div class="triage-body">The frequency and intensity of these thoughts indicate a high-risk situation. A crisis counsellor or mobile intervention team should be contacted now.<br><br>${protSummary}${resSummary}</div>
       <div class="resource-cards">
         <div class="resource-card urgent">
           <span class="resource-icon">☎️</span>
@@ -645,7 +902,7 @@ function showTriageResult() {
     html = `
       <div class="triage-level-badge" style="color:var(--blue);border-color:rgba(74,144,217,0.4);background:rgba(74,144,217,0.08);">💙 SOUTIEN RECOMMANDÉ</div>
       <div class="triage-heading">Telephone support & specialist referral</div>
-      <div class="triage-body">These thoughts are real and deserve attention, even if they're not yet at crisis level. Talking to someone trained in mental health is important. Below are free telephone lines and a directory of Montréal mental health specialists.</div>
+      <div class="triage-body">These thoughts are real and deserve attention, even if they're not yet at crisis level. Talking to someone trained in mental health is important.<br><br>${protSummary}${resSummary}</div>
       <div class="resource-cards">
         <div class="resource-card support">
           <span class="resource-icon">☎️</span>
@@ -695,7 +952,7 @@ function showTriageResult() {
     html = `
       <div class="triage-level-badge" style="color:var(--green);border-color:rgba(90,184,122,0.4);background:rgba(90,184,122,0.08);">🌱 PRÉVENTION</div>
       <div class="triage-heading">Prevention & wellness resources</div>
-      <div class="triage-body">These thoughts seem occasional and mild. It's still worth having support available — talking to someone early can prevent escalation. Below are low-barrier Montréal resources and a mental health directory.</div>
+      <div class="triage-body">These thoughts seem occasional and mild. It's still worth having support available — talking to someone early can prevent escalation.<br><br>${protSummary}${resSummary}</div>
       <div class="resource-cards">
         <div class="resource-card directory">
           <span class="resource-icon">☎️</span>
@@ -739,10 +996,16 @@ function showTriageResult() {
 
 function restartTriage() {
   answers.freq = 0; answers.intensity = 0; answers.plan = 0;
+  protective.clear(); resources.clear();
+  otherOpen = false; resourceOtherOpen = false;
+  document.getElementById('otherBox').style.display = 'none';
+  document.getElementById('otherText').value = '';
+  document.getElementById('resourceOtherBox').style.display = 'none';
+  document.getElementById('resourceOtherText').value = '';
   document.getElementById('triageResult').classList.remove('show');
   document.getElementById('triageResult').innerHTML = '';
   document.querySelectorAll('.triage-opt').forEach(b => b.classList.remove('selected'));
-  ['next1','next2','next3'].forEach(id => document.getElementById(id).disabled = true);
+  ['next1','next2','next3','next4'].forEach(id => document.getElementById(id).disabled = true);
   goStep(1);
 }
 

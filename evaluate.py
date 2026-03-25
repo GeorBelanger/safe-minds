@@ -78,7 +78,7 @@ DATASETS = {
         "split": "test",
         "text_col": "text",
         "label_col": "label",
-        # label mapping: "suicide" → 1 (positive), "non-suicide" → 0
+        # auto-detection will handle string "suicide" or int 1
         "positive_label": "suicide",
         "description": "Reddit binary (suicide/non-suicide), 23k test samples",
         "youth_relevant": False,
@@ -101,8 +101,9 @@ DATASETS = {
         "split": "test",
         "text_col": "text",
         "label_col": "label",
-        # "suicide" → 1, "non-suicide" → 0
-        "positive_label": "suicide",
+        # Original Kaggle dataset uses "suicide"/"non-suicide" strings,
+        # but the HuggingFace version converts to int: 1=suicide, 0=non-suicide
+        "positive_label": 1,
         "description": "Reddit r/teenagers + r/SuicideWatch + r/depression, 60k test — YOUTH RELEVANT",
         "youth_relevant": True,
     },
@@ -178,13 +179,35 @@ def load_samples(cfg: dict, n: Optional[int] = None) -> list[tuple[str, int]]:
         logger.error("Failed to load %s: %s", cfg["hf_id"], e)
         raise
 
+    # Inspect actual label values from first 20 rows — catches type mismatches early
+    sample_labels = [row[cfg["label_col"]] for row in ds.select(range(min(20, len(ds))))]
+    unique_labels = list(set(sample_labels))
+    logger.info("Label column '%s' — sample values: %s", cfg["label_col"], unique_labels)
+
+    # Auto-detect positive label if the configured one doesn't appear in the data
+    configured_positive = cfg["positive_label"]
+    if configured_positive not in unique_labels:
+        # Try common fallbacks: 1 (int), "1" (str), "suicide", "Suicide"
+        fallbacks = [1, "1", "suicide", "Suicide", "SUICIDE"]
+        auto_positive = next((f for f in fallbacks if f in unique_labels), None)
+        if auto_positive is not None:
+            logger.warning(
+                "Configured positive_label %r not found in data. "
+                "Auto-detected %r from actual values %s",
+                configured_positive, auto_positive, unique_labels,
+            )
+            configured_positive = auto_positive
+        else:
+            logger.error(
+                "Cannot determine positive label. Configured: %r, actual: %s",
+                configured_positive, unique_labels,
+            )
+
     samples = []
     for row in ds:
         text = str(row[cfg["text_col"]]).strip()
         raw_label = row[cfg["label_col"]]
-        # Normalise to binary
-        is_positive = (raw_label == cfg["positive_label"]) or (raw_label == 1 and cfg["positive_label"] == 1)
-        label = 1 if is_positive else 0
+        label = 1 if raw_label == configured_positive else 0
         if text:
             samples.append((text, label))
 

@@ -126,10 +126,72 @@ This project uses **[microsoft/Phi-3-mini-4k-instruct](https://huggingface.co/mi
 ```
 safe-minds/
 ├── detector.py        # Two-stage detection pipeline
+├── evaluate.py        # Benchmark evaluation against HuggingFace datasets
 ├── requirements.txt   # Python dependencies
 ├── index.html         # Portfolio / demo website
 └── README.md
 ```
+
+---
+
+## Benchmark evaluation
+
+Evaluated against two publicly available HuggingFace datasets using the **Stage 1 regex pre-filter** (300 stratified samples each).
+
+### Datasets
+
+| # | Dataset | Description | Youth-relevant |
+|---|---------|-------------|----------------|
+| 1 | [vibhorag101/suicide_prediction_dataset_phr](https://huggingface.co/datasets/vibhorag101/suicide_prediction_dataset_phr) | Reddit binary (suicide / non-suicide), 23k test samples | — |
+| 2 | [thePixel42/depression-detection](https://huggingface.co/datasets/thePixel42/depression-detection) | Reddit r/teenagers + r/SuicideWatch + r/depression, 60k test samples | ★ |
+
+Dataset 2 is the most aligned with safe-minds' target population as it explicitly includes posts from r/teenagers.
+
+### Results — Stage 1 pre-filter (300 samples, threshold: standard)
+
+| Dataset | Precision | Recall | F1 | FNR ↓ |
+|---------|-----------|--------|----|--------|
+| suicide_prediction_dataset_phr | 0.95 | 0.39 | 0.54 | 0.61 |
+| depression-detection ★ (youth) | 0.95 | 0.46 | 0.62 | 0.54 |
+
+**Confusion matrix — depression-detection (youth dataset):**
+
+```
+                 Pred NEG   Pred POS
+  Actual NEG       146          4
+  Actual POS        81         69
+```
+
+### Interpretation
+
+**What the pre-filter does well:**
+- **Precision of 0.95** — when it fires, it is almost always right. Very few false alarms (4 false positives out of 150 negatives).
+- **Specificity of 0.97** — correctly ignores 97% of non-crisis messages, avoiding alarm fatigue.
+
+**Where it falls short:**
+- **Recall of 0.46 / FNR of 0.54** — misses roughly half of crisis posts. This is expected: the regex pre-filter is designed to catch *explicit* crisis language (direct statements). Reddit posts expressing suicidal ideation often use indirect, metaphorical, or contextual language that regex cannot capture.
+
+**Why this is the right architecture:**
+The pre-filter is not meant to work alone. Its role is to catch *unambiguous* cases instantly at zero cost and fast-path them to emergency resources. The **Stage 2 LLM (Phi-3-mini)** handles the indirect, nuanced cases the pre-filter misses — trading speed for contextual understanding. Running the full two-stage pipeline is expected to significantly improve recall.
+
+### Running the benchmark
+
+```bash
+pip install -r requirements.txt
+
+# Pre-filter only (fast, no model needed)
+python evaluate.py --dataset all --stage prefilter --samples 300
+
+# Full two-stage pipeline (loads Phi-3-mini locally)
+python evaluate.py --dataset all --stage llm --samples 200
+
+# Save results to JSON
+python evaluate.py --dataset all --stage prefilter --samples 300 --output results.json
+```
+
+**Threshold options:**
+- `--threshold standard` — MEDIUM/HIGH/CRISIS = positive (default, higher recall)
+- `--threshold strict` — HIGH/CRISIS only = positive (higher precision)
 
 ---
 
@@ -167,7 +229,7 @@ If you or someone you know is in crisis:
 
 ## Author
 
-**Georges Belanger Albarran** — AI Governance & Applied NLP · Montreal  
+**Georges Bélanger-Alba** — AI Governance & Applied NLP · Montreal  
 [github.com/GeorBelanger](https://github.com/GeorBelanger)
 
 ---

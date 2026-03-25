@@ -209,7 +209,8 @@
 
   @media (max-width: 768px) {
     nav { padding: 16px 24px; } .nav-links { display: none; }
-    section { padding: 72px 24px; } #hero { padding: 120px 24px 72px; } #pipeline { padding: 72px 24px; }
+    section { padding: 72px 24px; } #hero { padding: 100px 24px 72px; } #pipeline { padding: 72px 24px; }
+    #hero > div > div[style*="grid"] { grid-template-columns: 1fr !important; gap: 40px !important; }
     .pipeline-grid { grid-template-columns: 1fr; } .pipeline-arrow { padding: 16px 0; transform: rotate(90deg); }
     .stats-row { grid-template-columns: 1fr; } .stack-grid { grid-template-columns: repeat(2, 1fr); }
     .risk-grid { grid-template-columns: repeat(2, 1fr); } .triage-options { grid-template-columns: 1fr; }
@@ -223,25 +224,175 @@
 <nav>
   <a href="#" class="nav-logo">safe-minds</a>
   <ul class="nav-links">
+    <li><a href="#about-project">About</a></li>
     <li><a href="#pipeline">Pipeline</a></li>
-    <li><a href="#demo">Demo</a></li>
     <li><a href="#stack">Stack</a></li>
-    <li><a href="#about">About</a></li>
+    <li><a href="#author">Author</a></li>
     <li><a href="https://github.com/GeorBelanger/safe-minds" target="_blank" rel="noopener">GitHub ↗</a></li>
   </ul>
 </nav>
 
-<!-- HERO -->
-<section id="hero">
-  <div class="glow glow-1"></div><div class="glow glow-2"></div>
+<!-- ── HERO: TRIAGE TOOL ── -->
+<section id="hero" style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding-top:100px; max-width:100%; padding-left:10vw; padding-right:10vw; position:relative;">
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+
   <div class="hero-eyebrow fadeUp d1">AI Safety · Youth Mental Health · Montréal</div>
-  <h1 class="fadeUp d2">Detecting dark<br>thoughts in <em>youth</em><br>LLM interactions</h1>
-  <p class="hero-sub fadeUp d3">A two-stage NLP pipeline — regex pre-filter + on-device language model — that classifies risk in real-time and routes to the right support, from telephone lines to psychiatric emergency in Montréal.</p>
-  <div class="hero-ctas fadeUp d4">
-    <a href="https://github.com/GeorBelanger/safe-minds" target="_blank" rel="noopener" class="btn btn-primary">View on GitHub ↗</a>
-    <a href="#demo" class="btn btn-ghost">Try the triage tool</a>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; margin-top:0;">
+
+    <!-- Left: headline + context -->
+    <div>
+      <h1 class="fadeUp d2" style="font-size:clamp(36px,5vw,68px);">A triage tool<br>for youth<br><em>in crisis</em></h1>
+      <p class="hero-sub fadeUp d3" style="font-size:15px; margin:20px 0 28px;">
+        Answer five short questions about frequency, intensity, plan, protective factors, and personal resources — and get routed to the right Montréal support, from telephone lines to psychiatric emergency.
+      </p>
+      <div class="fadeUp d3" style="display:flex; flex-direction:column; gap:12px; font-size:13px; color:var(--muted);">
+        <div style="display:flex; align-items:center; gap:10px;"><span style="color:var(--teal); font-size:16px;">✓</span> 5-step clinical triage</div>
+        <div style="display:flex; align-items:center; gap:10px;"><span style="color:var(--teal); font-size:16px;">✓</span> Routes to verified Montréal resources</div>
+        <div style="display:flex; align-items:center; gap:10px;"><span style="color:var(--teal); font-size:16px;">✓</span> Protective factors & personal resources</div>
+        <div style="display:flex; align-items:center; gap:10px;"><span style="color:var(--teal); font-size:16px;">✓</span> Powered by on-device Phi-3-mini LLM</div>
+      </div>
+      <div style="margin-top:32px; display:flex; gap:12px; flex-wrap:wrap;" class="fadeUp d4">
+        <a href="https://github.com/GeorBelanger/safe-minds" target="_blank" rel="noopener" class="btn btn-primary">GitHub ↗</a>
+        <a href="#about-project" class="btn btn-ghost">Learn more ↓</a>
+      </div>
+    </div>
+
+    <!-- Right: triage tool -->
+    <div class="fadeUp d3">
+      <div class="triage-box" style="margin-top:0;">
+        <div class="triage-tabs">
+          <button class="triage-tab active" onclick="switchTab('triage')">Montréal triage</button>
+          <button class="triage-tab" onclick="switchTab('quick')">Quick classify</button>
+        </div>
+
+        <!-- TRIAGE PANEL (default) -->
+        <div class="triage-panel show" id="triagePanel">
+          <!-- Step 1 -->
+          <div class="triage-step active" id="step1">
+            <div class="triage-question">How often do these thoughts occur?</div>
+            <div class="triage-subtitle">Select what best describes what you or the young person is experiencing.</div>
+            <div class="triage-options">
+              <button class="triage-opt" onclick="selectOpt(this, 'freq', 1)"><span class="opt-icon">🌤</span><div><div class="opt-label">Rarely</div><div class="opt-desc">Once or twice, very occasionally</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'freq', 2)"><span class="opt-icon">☁️</span><div><div class="opt-label">Sometimes</div><div class="opt-desc">A few times a week</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'freq', 3)"><span class="opt-icon">🌧</span><div><div class="opt-label">Often</div><div class="opt-desc">Daily or multiple times per day</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'freq', 4)"><span class="opt-icon">⛈</span><div><div class="opt-label">Constantly</div><div class="opt-desc">Persistent, hard to escape</div></div></button>
+            </div>
+            <div class="triage-nav"><span class="triage-progress">Step 1 of 5</span><button class="triage-next" id="next1" onclick="goStep(2)" disabled>Next →</button></div>
+          </div>
+          <!-- Step 2 -->
+          <div class="triage-step" id="step2">
+            <div class="triage-question">How strong or intense are these thoughts?</div>
+            <div class="triage-subtitle">This helps determine the level of urgency and type of support needed.</div>
+            <div class="triage-options">
+              <button class="triage-opt" onclick="selectOpt(this, 'intensity', 1)"><span class="opt-icon">💭</span><div><div class="opt-label">Mild</div><div class="opt-desc">Fleeting thoughts, easily dismissed</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'intensity', 2)"><span class="opt-icon">😔</span><div><div class="opt-label">Moderate</div><div class="opt-desc">Distressing but manageable</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'intensity', 3)"><span class="opt-icon">😰</span><div><div class="opt-label">Strong</div><div class="opt-desc">Overwhelming, hard to function</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'intensity', 4)"><span class="opt-icon">🆘</span><div><div class="opt-label">Crisis</div><div class="opt-desc">Active intent or a specific plan</div></div></button>
+            </div>
+            <div class="triage-nav"><button class="triage-back" onclick="goStep(1)">← Back</button><span class="triage-progress">Step 2 of 5</span><button class="triage-next" id="next2" onclick="goStep(3)" disabled>Next →</button></div>
+          </div>
+          <!-- Step 3 -->
+          <div class="triage-step" id="step3">
+            <div class="triage-question">Is there a specific plan or means in mind?</div>
+            <div class="triage-subtitle">This question is critical for determining whether emergency services are needed.</div>
+            <div class="triage-options">
+              <button class="triage-opt" onclick="selectOpt(this, 'plan', 1)"><span class="opt-icon">🙅</span><div><div class="opt-label">No plan</div><div class="opt-desc">Just thoughts, no specific idea</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'plan', 2)"><span class="opt-icon">🤔</span><div><div class="opt-label">Vague thoughts</div><div class="opt-desc">Some ideas, nothing specific</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'plan', 3)"><span class="opt-icon">⚠️</span><div><div class="opt-label">Partial plan</div><div class="opt-desc">Has thought about a method</div></div></button>
+              <button class="triage-opt" onclick="selectOpt(this, 'plan', 4)"><span class="opt-icon">🚨</span><div><div class="opt-label">Specific plan</div><div class="opt-desc">Has a plan and/or access to means</div></div></button>
+            </div>
+            <div class="triage-nav"><button class="triage-back" onclick="goStep(2)">← Back</button><span class="triage-progress">Step 3 of 5</span><button class="triage-next" id="next3" onclick="goStep(4)" disabled>Next →</button></div>
+          </div>
+          <!-- Step 4: Protective factors -->
+          <div class="triage-step" id="step4">
+            <div class="triage-question">What is holding them back from acting?</div>
+            <div class="triage-subtitle">Protective factors significantly reduce immediate risk. Select all that apply.</div>
+            <div class="triage-options" id="protectiveOptions">
+              <button class="triage-opt multi" onclick="toggleProtective(this, 'family')"><span class="opt-icon">👨‍👩‍👧</span><div><div class="opt-label">Family or loved ones</div><div class="opt-desc">Fear of hurting or leaving someone</div></div></button>
+              <button class="triage-opt multi" onclick="toggleProtective(this, 'future')"><span class="opt-icon">🌅</span><div><div class="opt-label">Hope for the future</div><div class="opt-desc">A goal, dream, or thing to look forward to</div></div></button>
+              <button class="triage-opt multi" onclick="toggleProtective(this, 'fear')"><span class="opt-icon">😨</span><div><div class="opt-label">Fear of the act itself</div><div class="opt-desc">Pain, failure, or what comes after</div></div></button>
+              <button class="triage-opt multi" onclick="toggleProtective(this, 'beliefs')"><span class="opt-icon">🙏</span><div><div class="opt-label">Religious or moral beliefs</div><div class="opt-desc">Personal values that make it feel wrong</div></div></button>
+              <button class="triage-opt multi" onclick="toggleProtective(this, 'pet')"><span class="opt-icon">🐾</span><div><div class="opt-label">A pet</div><div class="opt-desc">Responsibility or love for an animal</div></div></button>
+              <button class="triage-opt multi" onclick="toggleProtective(this, 'nothing')"><span class="opt-icon">⬛</span><div><div class="opt-label">Nothing comes to mind</div><div class="opt-desc">Can't identify anything holding them back</div></div></button>
+            </div>
+            <div style="margin-top:12px;">
+              <button class="triage-opt multi" id="otherToggleBtn" onclick="toggleOtherBox()" style="width:100%;">
+                <span class="opt-icon">✏️</span><div><div class="opt-label">Other</div><div class="opt-desc">Describe in your own words</div></div>
+              </button>
+              <div id="otherBox" style="display:none; margin-top:8px;">
+                <textarea id="otherText" placeholder="e.g. 'They mentioned a concert next month'..." style="width:100%; background:var(--bg3); border:1px solid var(--teal); border-radius:10px; padding:12px 14px; color:var(--text); font-family:var(--sans); font-size:13px; line-height:1.6; resize:vertical; min-height:72px; outline:none;" oninput="handleOtherText()"></textarea>
+              </div>
+            </div>
+            <div class="triage-nav" style="margin-top:20px;"><button class="triage-back" onclick="goStep(3)">← Back</button><span class="triage-progress">Step 4 of 5</span><button class="triage-next" id="next4" onclick="goStep(5)" disabled>Next →</button></div>
+          </div>
+          <!-- Step 5: Resources -->
+          <div class="triage-step" id="step5">
+            <div class="triage-question">What resources does this person have?</div>
+            <div class="triage-subtitle">Personal resources are positive forces that pull toward life — inner strengths, relationships, and sources of meaning. Select all that apply.</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;" id="resourceOptions">
+              <div style="grid-column:1/-1; font-family:var(--mono); font-size:10px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:4px 0 2px;">People &amp; belonging</div>
+              <button class="triage-opt multi" onclick="toggleResource(this,'close_friends')"><span class="opt-icon">👥</span><div><div class="opt-label">Close friends</div></div></button>
+              <button class="triage-opt multi" onclick="toggleResource(this,'family_warmth')"><span class="opt-icon">🏠</span><div><div class="opt-label">Warm family bond</div></div></button>
+              <button class="triage-opt multi" onclick="toggleResource(this,'community')"><span class="opt-icon">🌍</span><div><div class="opt-label">Community</div></div></button>
+              <button class="triage-opt multi" onclick="toggleResource(this,'mentor')"><span class="opt-icon">🤝</span><div><div class="opt-label">A mentor</div></div></button>
+              <div style="grid-column:1/-1; font-family:var(--mono); font-size:10px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:10px 0 2px;">Joy &amp; meaning</div>
+              <button class="triage-opt multi" onclick="toggleResource(this,'creative')"><span class="opt-icon">🎨</span><div><div class="opt-label">Creative outlet</div></div></button>
+              <button class="triage-opt multi" onclick="toggleResource(this,'movement')"><span class="opt-icon">🏃</span><div><div class="opt-label">Movement or sport</div></div></button>
+              <button class="triage-opt multi" onclick="toggleResource(this,'purpose')"><span class="opt-icon">🌟</span><div><div class="opt-label">Sense of purpose</div></div></button>
+              <button class="triage-opt multi" onclick="toggleResource(this,'future_goal')"><span class="opt-icon">🗓</span><div><div class="opt-label">A goal or dream</div></div></button>
+              <button class="triage-opt multi" onclick="toggleResource(this,'nature')"><span class="opt-icon">🌿</span><div><div class="opt-label">Nature & outdoors</div></div></button>
+              <button class="triage-opt multi" onclick="toggleResource(this,'resilience')"><span class="opt-icon">💪</span><div><div class="opt-label">Resilience & grit</div></div></button>
+            </div>
+            <div style="margin-top:4px;">
+              <button class="triage-opt multi" id="resourceOtherBtn" onclick="toggleResourceOther()" style="width:100%; background:rgba(60,184,160,0.05); border-color:rgba(60,184,160,0.25);">
+                <span class="opt-icon">✏️</span><div><div class="opt-label" style="color:var(--teal2);">Other — what's going well? What brings them joy?</div><div class="opt-desc">The most meaningful resource is often personal.</div></div>
+              </button>
+              <div id="resourceOtherBox" style="display:none; margin-top:8px;">
+                <textarea id="resourceOtherText" placeholder="e.g. 'She lights up when she talks about her cat and her painting class'..." style="width:100%; background:var(--bg3); border:1px solid var(--teal); border-radius:10px; padding:12px 14px; color:var(--text); font-family:var(--sans); font-size:13px; line-height:1.6; resize:vertical; min-height:80px; outline:none;" oninput="handleResourceOther()"></textarea>
+              </div>
+            </div>
+            <div class="triage-nav" style="margin-top:20px;"><button class="triage-back" onclick="goStep(4)">← Back</button><span class="triage-progress">Step 5 of 5</span><button class="triage-next" id="next5" onclick="showTriageResult()">See resources →</button></div>
+          </div>
+          <!-- Result -->
+          <div class="triage-result" id="triageResult"></div>
+        </div>
+
+        <!-- QUICK PANEL -->
+        <div class="quick-panel" id="quickPanel">
+          <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Try an example:</p>
+          <div class="quick-examples">
+            <button class="quick-ex" onclick="setQuick(this.textContent)">I've been feeling really down lately</button>
+            <button class="quick-ex" onclick="setQuick(this.textContent)">I want to kill myself</button>
+            <button class="quick-ex" onclick="setQuick(this.textContent)">nobody cares about me</button>
+            <button class="quick-ex" onclick="setQuick(this.textContent)">what is machine learning?</button>
+            <button class="quick-ex" onclick="setQuick(this.textContent)">I hate myself and feel worthless</button>
+          </div>
+          <div class="quick-input-row">
+            <input type="text" class="quick-input" id="quickInput" placeholder="Type a message to classify..." />
+            <button class="quick-btn" onclick="runQuick()">Classify →</button>
+          </div>
+          <div class="quick-result" id="quickResult">
+            <div class="quick-risk-tag" id="quickTag"></div>
+            <div class="quick-message" id="quickMsg"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
-  <div class="stats-row fadeUp d4">
+</section>
+
+<hr class="divider">
+
+<!-- ABOUT PROJECT -->
+<section id="about-project" style="max-width:1100px; margin:0 auto;">
+  <div class="section-label">The project</div>
+  <h2>Why <em>safe-minds</em>?</h2>
+  <p class="section-desc">As LLMs become embedded in everyday tools used by children and teenagers, a vulnerable young person expressing a mental health crisis in a chat interface is no longer a hypothetical. safe-minds is a lightweight, privacy-first pipeline that classifies risk in real time and routes to the right help — from a phone call to a mobile crisis team to psychiatric emergency.</p>
+
+  <div class="stats-row" style="margin-top:48px;">
     <div class="stat"><span class="stat-num">800K+</span><span class="stat-label">Youth contact KHP yearly</span></div>
     <div class="stat"><span class="stat-num">2-stage</span><span class="stat-label">Detection pipeline</span></div>
     <div class="stat"><span class="stat-num">100%</span><span class="stat-label">On-device, no API key</span></div>
@@ -254,7 +405,7 @@
 <section id="pipeline" style="background: var(--bg2); max-width: 100%; padding: 100px 10vw;">
   <div class="section-label">How it works</div>
   <h2>A two-stage<br><em>detection pipeline</em></h2>
-  <p class="section-desc">Stage 1 catches unambiguous crisis language in microseconds with zero compute cost. Stage 2 handles nuance — context, tone, and passive ideation — using a local LLM.</p>
+  <p class="section-desc">Stage 1 catches unambiguous crisis language in microseconds at zero cost. Stage 2 handles nuance — context, tone, and passive ideation — using a local LLM.</p>
   <div class="pipeline-grid">
     <div class="pipeline-card stage1">
       <span class="stage-tag">Stage 1</span>
@@ -292,294 +443,6 @@
 
 <hr class="divider">
 
-<!-- DEMO -->
-<section id="demo" style="max-width: 1100px; margin: 0 auto;">
-  <div class="section-label">Interactive demo</div>
-  <h2>Try the<br><em>triage tool</em></h2>
-  <p class="section-desc">Two modes: quick message classification (Stage 1 pre-filter, runs in the browser), or the full triage questionnaire that routes to the right Montréal resource based on frequency and intensity.</p>
-
-  <div class="triage-box">
-    <div class="triage-tabs">
-      <button class="triage-tab active" onclick="switchTab('quick')">Quick classify</button>
-      <button class="triage-tab" onclick="switchTab('triage')">Montréal triage</button>
-    </div>
-
-    <!-- QUICK PANEL -->
-    <div class="quick-panel show" id="quickPanel">
-      <p style="font-size: 13px; color: var(--muted); margin-bottom: 12px;">Try an example:</p>
-      <div class="quick-examples">
-        <button class="quick-ex" onclick="setQuick(this.textContent)">I've been feeling really down lately</button>
-        <button class="quick-ex" onclick="setQuick(this.textContent)">I want to kill myself</button>
-        <button class="quick-ex" onclick="setQuick(this.textContent)">nobody cares about me</button>
-        <button class="quick-ex" onclick="setQuick(this.textContent)">what is machine learning?</button>
-        <button class="quick-ex" onclick="setQuick(this.textContent)">I hate myself and feel worthless</button>
-      </div>
-      <div class="quick-input-row">
-        <input type="text" class="quick-input" id="quickInput" placeholder="Type a message to classify..." />
-        <button class="quick-btn" onclick="runQuick()">Classify →</button>
-      </div>
-      <div class="quick-result" id="quickResult">
-        <div class="quick-risk-tag" id="quickTag"></div>
-        <div class="quick-message" id="quickMsg"></div>
-      </div>
-    </div>
-
-    <!-- TRIAGE PANEL -->
-    <div class="triage-panel" id="triagePanel">
-
-      <!-- Step 1: Frequency -->
-      <div class="triage-step active" id="step1">
-        <div class="triage-question">How often do these thoughts occur?</div>
-        <div class="triage-subtitle">Select the option that best describes what you or the young person is experiencing.</div>
-        <div class="triage-options">
-          <button class="triage-opt" onclick="selectOpt(this, 'freq', 1)">
-            <span class="opt-icon">🌤</span>
-            <div><div class="opt-label">Rarely</div><div class="opt-desc">Once or twice, or very occasionally</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'freq', 2)">
-            <span class="opt-icon">☁️</span>
-            <div><div class="opt-label">Sometimes</div><div class="opt-desc">A few times a week</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'freq', 3)">
-            <span class="opt-icon">🌧</span>
-            <div><div class="opt-label">Often</div><div class="opt-desc">Daily or multiple times per day</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'freq', 4)">
-            <span class="opt-icon">⛈</span>
-            <div><div class="opt-label">Constantly</div><div class="opt-desc">Persistent, hard to escape</div></div>
-          </button>
-        </div>
-        <div class="triage-nav">
-          <span class="triage-progress">Step 1 of 5</span>
-          <button class="triage-next" id="next1" onclick="goStep(2)" disabled>Next →</button>
-        </div>
-      </div>
-
-      <!-- Step 2: Intensity -->
-      <div class="triage-step" id="step2">
-        <div class="triage-question">How strong or intense are these thoughts?</div>
-        <div class="triage-subtitle">This helps determine the level of urgency and type of support needed.</div>
-        <div class="triage-options">
-          <button class="triage-opt" onclick="selectOpt(this, 'intensity', 1)">
-            <span class="opt-icon">💭</span>
-            <div><div class="opt-label">Mild</div><div class="opt-desc">Fleeting thoughts, easily dismissed</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'intensity', 2)">
-            <span class="opt-icon">😔</span>
-            <div><div class="opt-label">Moderate</div><div class="opt-desc">Distressing but manageable</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'intensity', 3)">
-            <span class="opt-icon">😰</span>
-            <div><div class="opt-label">Strong</div><div class="opt-desc">Overwhelming, hard to function</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'intensity', 4)">
-            <span class="opt-icon">🆘</span>
-            <div><div class="opt-label">Crisis</div><div class="opt-desc">Active intent or a specific plan</div></div>
-          </button>
-        </div>
-        <div class="triage-nav">
-          <button class="triage-back" onclick="goStep(1)">← Back</button>
-          <span class="triage-progress">Step 2 of 5</span>
-          <button class="triage-next" id="next2" onclick="goStep(3)" disabled>Next →</button>
-        </div>
-      </div>
-
-      <!-- Step 3: Plan -->
-      <div class="triage-step" id="step3">
-        <div class="triage-question">Is there a specific plan or means in mind?</div>
-        <div class="triage-subtitle">This question is critical for determining whether emergency services are needed.</div>
-        <div class="triage-options">
-          <button class="triage-opt" onclick="selectOpt(this, 'plan', 1)">
-            <span class="opt-icon">🙅</span>
-            <div><div class="opt-label">No plan</div><div class="opt-desc">Just thoughts, no specific idea</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'plan', 2)">
-            <span class="opt-icon">🤔</span>
-            <div><div class="opt-label">Vague thoughts</div><div class="opt-desc">Some ideas, nothing specific</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'plan', 3)">
-            <span class="opt-icon">⚠️</span>
-            <div><div class="opt-label">Partial plan</div><div class="opt-desc">Has thought about a method</div></div>
-          </button>
-          <button class="triage-opt" onclick="selectOpt(this, 'plan', 4)">
-            <span class="opt-icon">🚨</span>
-            <div><div class="opt-label">Specific plan</div><div class="opt-desc">Has a plan and/or access to means</div></div>
-          </button>
-        </div>
-        <div class="triage-nav">
-          <button class="triage-back" onclick="goStep(2)">← Back</button>
-          <span class="triage-progress">Step 3 of 5</span>
-          <button class="triage-next" id="next3" onclick="goStep(4)" disabled>Next →</button>
-        </div>
-      </div>
-
-      <!-- Step 4: Protective factors -->
-      <div class="triage-step" id="step4">
-        <div class="triage-question">What is holding them back from acting?</div>
-        <div class="triage-subtitle">Protective factors are a key part of risk assessment. Even small reasons for living can significantly reduce immediate risk. Select all that apply, or describe in your own words.</div>
-        <div class="triage-options" id="protectiveOptions">
-          <button class="triage-opt multi" onclick="toggleProtective(this, 'family')">
-            <span class="opt-icon">👨‍👩‍👧</span>
-            <div><div class="opt-label">Family or loved ones</div><div class="opt-desc">Fear of hurting or leaving someone behind</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleProtective(this, 'future')">
-            <span class="opt-icon">🌅</span>
-            <div><div class="opt-label">Hope for the future</div><div class="opt-desc">A goal, dream, or thing they're looking forward to</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleProtective(this, 'fear')">
-            <span class="opt-icon">😨</span>
-            <div><div class="opt-label">Fear of the act itself</div><div class="opt-desc">Pain, failure, or fear of what comes after</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleProtective(this, 'beliefs')">
-            <span class="opt-icon">🙏</span>
-            <div><div class="opt-label">Religious or moral beliefs</div><div class="opt-desc">Personal values that make it feel wrong</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleProtective(this, 'pet')">
-            <span class="opt-icon">🐾</span>
-            <div><div class="opt-label">A pet</div><div class="opt-desc">Responsibility or love for an animal</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleProtective(this, 'nothing')">
-            <span class="opt-icon">⬛</span>
-            <div><div class="opt-label">Nothing comes to mind</div><div class="opt-desc">Can't identify anything holding them back</div></div>
-          </button>
-        </div>
-
-        <!-- Other / open text -->
-        <div style="margin-top: 12px;">
-          <button class="triage-opt multi" id="otherToggleBtn" onclick="toggleOtherBox()" style="width:100%; margin-bottom: 0;">
-            <span class="opt-icon">✏️</span>
-            <div>
-              <div class="opt-label">Other — describe in your own words</div>
-              <div class="opt-desc">Sometimes the most important protective factor is something personal and hard to categorize</div>
-            </div>
-          </button>
-          <div id="otherBox" style="display:none; margin-top: 8px;">
-            <textarea id="otherText"
-              placeholder="e.g. 'They mentioned a concert they want to go to next month' or 'They said their little sister needs them'..."
-              style="width:100%; background:var(--bg3); border:1px solid var(--teal); border-radius:10px; padding:14px 16px; color:var(--text); font-family:var(--sans); font-size:14px; line-height:1.6; resize:vertical; min-height:90px; outline:none;"
-              oninput="handleOtherText()"
-            ></textarea>
-            <p style="font-size:12px; color:var(--teal); margin-top:6px; font-family:var(--mono);">↑ This will be included in the risk summary shown to a clinician or support worker.</p>
-          </div>
-        </div>
-
-        <div class="triage-nav" style="margin-top: 24px;">
-          <button class="triage-back" onclick="goStep(3)">← Back</button>
-          <span class="triage-progress">Step 4 of 5</span>
-          <button class="triage-next" id="next4" onclick="goStep(5)" disabled>Next →</button>
-        </div>
-      </div>
-
-      <!-- Step 5: Personal Resources -->
-      <div class="triage-step" id="step5">
-        <div class="triage-question">What resources does this person have in their life?</div>
-        <div class="triage-subtitle">
-          A <em>personal resource</em> is any internal strength, relationship, activity, or source of meaning that builds resilience and reasons for living. These are the forces that <em>pull toward life</em> — not just barriers to the act, but positive anchors. Select all that apply.
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;" id="resourceOptions">
-
-          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:4px 0 2px;">People &amp; belonging</div>
-          <button class="triage-opt multi" onclick="toggleResource(this,'close_friends')">
-            <span class="opt-icon">👥</span><div><div class="opt-label">Close friends</div><div class="opt-desc">People they trust and confide in</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'family_warmth')">
-            <span class="opt-icon">🏠</span><div><div class="opt-label">Warm family bond</div><div class="opt-desc">At least one family member they feel safe with</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'community')">
-            <span class="opt-icon">🌍</span><div><div class="opt-label">Community or belonging</div><div class="opt-desc">A team, group, neighbourhood, or culture</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'mentor')">
-            <span class="opt-icon">🤝</span><div><div class="opt-label">A mentor or trusted adult</div><div class="opt-desc">Teacher, coach, therapist, or elder</div></div>
-          </button>
-
-          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:12px 0 2px;">Joy &amp; flow</div>
-          <button class="triage-opt multi" onclick="toggleResource(this,'creative')">
-            <span class="opt-icon">🎨</span><div><div class="opt-label">Creative outlet</div><div class="opt-desc">Art, music, writing, cooking, building</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'movement')">
-            <span class="opt-icon">🏃</span><div><div class="opt-label">Movement or sport</div><div class="opt-desc">Exercise, dance, martial arts, yoga</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'nature')">
-            <span class="opt-icon">🌿</span><div><div class="opt-label">Nature &amp; outdoors</div><div class="opt-desc">Parks, animals, the outdoors calm them</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'play')">
-            <span class="opt-icon">🎮</span><div><div class="opt-label">Play &amp; humor</div><div class="opt-desc">Games, laughter, lightness — moments of fun</div></div>
-          </button>
-
-          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:12px 0 2px;">Meaning &amp; purpose</div>
-          <button class="triage-opt multi" onclick="toggleResource(this,'purpose')">
-            <span class="opt-icon">🌟</span><div><div class="opt-label">Sense of purpose</div><div class="opt-desc">A vocation, cause, or role that matters</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'spirituality')">
-            <span class="opt-icon">✨</span><div><div class="opt-label">Spirituality or faith</div><div class="opt-desc">Connection to something larger than oneself</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'helping')">
-            <span class="opt-icon">💛</span><div><div class="opt-label">Helping others</div><div class="opt-desc">Volunteering, caregiving, or being needed</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'curiosity')">
-            <span class="opt-icon">🔭</span><div><div class="opt-label">Curiosity &amp; learning</div><div class="opt-desc">A subject, skill, or question they're drawn to</div></div>
-          </button>
-
-          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:12px 0 2px;">Future &amp; hope</div>
-          <button class="triage-opt multi" onclick="toggleResource(this,'future_goal')">
-            <span class="opt-icon">🗓</span><div><div class="opt-label">A goal or dream</div><div class="opt-desc">Something they want to achieve or experience</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'anticipation')">
-            <span class="opt-icon">🎉</span><div><div class="opt-label">Something to look forward to</div><div class="opt-desc">An event, trip, reunion, or moment coming up</div></div>
-          </button>
-
-          <div style="grid-column:1/-1; font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.15em; text-transform:uppercase; padding:12px 0 2px;">Inner strengths</div>
-          <button class="triage-opt multi" onclick="toggleResource(this,'resilience')">
-            <span class="opt-icon">💪</span><div><div class="opt-label">Resilience &amp; grit</div><div class="opt-desc">Has overcome hard things before</div></div>
-          </button>
-          <button class="triage-opt multi" onclick="toggleResource(this,'self_awareness')">
-            <span class="opt-icon">🪞</span><div><div class="opt-label">Self-awareness</div><div class="opt-desc">Can name their feelings and ask for help</div></div>
-          </button>
-
-        </div>
-
-        <!-- Other — open text (prominent) -->
-        <div style="margin-top: 4px;">
-          <button class="triage-opt multi" id="resourceOtherBtn" onclick="toggleResourceOther()" style="width:100%; background: rgba(60,184,160,0.05); border-color: rgba(60,184,160,0.25);">
-            <span class="opt-icon">✏️</span>
-            <div>
-              <div class="opt-label" style="color:var(--teal2);">Other — what's going well? What brings them joy?</div>
-              <div class="opt-desc">The most meaningful resource is often something deeply personal. Describe it here — this will appear in the summary for a clinician or support worker.</div>
-            </div>
-          </button>
-          <div id="resourceOtherBox" style="display:none; margin-top:8px;">
-            <textarea id="resourceOtherText"
-              placeholder="e.g. 'She lights up when she talks about her cat and her painting class' or 'He mentioned wanting to travel to Japan someday' or 'She's been volunteering at a shelter and feels needed there'..."
-              style="width:100%; background:var(--bg3); border:1px solid var(--teal); border-radius:10px; padding:14px 16px; color:var(--text); font-family:var(--sans); font-size:14px; line-height:1.6; resize:vertical; min-height:110px; outline:none;"
-              oninput="handleResourceOther()"
-            ></textarea>
-            <p style="font-size:12px; color:var(--teal); margin-top:6px; font-family:var(--mono);">↑ Included verbatim in the clinical summary.</p>
-          </div>
-        </div>
-
-        <div style="margin-top:16px; padding:16px; background:rgba(60,184,160,0.05); border:1px solid rgba(60,184,160,0.15); border-radius:10px;">
-          <p style="font-size:13px; color:var(--muted); line-height:1.7;">
-            <span style="color:var(--teal2); font-weight:500;">Why this matters:</span> Research shows that identifying even one strong personal resource significantly improves outcomes. A single meaningful anchor — a song, a person, a dream — can be the thread a clinician or support worker pulls on to build a safety plan.
-          </p>
-        </div>
-
-        <div class="triage-nav" style="margin-top: 24px;">
-          <button class="triage-back" onclick="goStep(4)">← Back</button>
-          <span class="triage-progress">Step 5 of 5</span>
-          <button class="triage-next" id="next5" onclick="showTriageResult()">See resources →</button>
-        </div>
-      </div>
-
-      <!-- Result -->
-      <div class="triage-result" id="triageResult"></div>
-
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
 <!-- STACK -->
 <section id="stack" style="max-width: 1100px; margin: 0 auto;">
   <div class="section-label">Technical stack</div>
@@ -599,15 +462,8 @@
 <span class="kw">result</span> = <span class="fn">assess</span>(<span class="str">"I've been feeling really hopeless lately"</span>)<br><br>
 <span class="cm"># Structured output — audit-trail ready</span><br>
 <span class="kw">print</span>(result.<span class="fn">to_json</span>())<br><br>
-<span class="cm"># → {</span><br>
-<span class="cm">#     "risk_level": "MEDIUM",</span><br>
-<span class="cm">#     "confidence": 0.82,</span><br>
-<span class="cm">#     "indicators": ["hopeless"],</span><br>
-<span class="cm">#     "reasoning": "Expresses hopelessness — soft intervention warranted.",</span><br>
-<span class="cm">#     "safe_response": "It sounds like things have been really hard. You're not alone.",</span><br>
-<span class="cm">#     "model_used": "microsoft/Phi-3-mini-4k-instruct",</span><br>
-<span class="cm">#     "assessed_at": "2025-04-01T14:32:00Z"</span><br>
-<span class="cm"># }</span>
+<span class="cm"># → { "risk_level": "MEDIUM", "confidence": 0.82,</span><br>
+<span class="cm">#     "indicators": ["hopeless"], "model_used": "Phi-3-mini" }</span>
   </div>
 </section>
 
@@ -632,8 +488,8 @@
 
 <hr class="divider">
 
-<!-- ABOUT -->
-<section id="about" style="max-width: 1100px; margin: 0 auto;">
+<!-- ABOUT AUTHOR -->
+<section id="author" style="max-width: 1100px; margin: 0 auto;">
   <div class="section-label">The builder</div>
   <h2>About <em>the project</em></h2>
   <p class="section-desc">This project sits at the intersection of applied NLP, AI safety, and real-world mental health impact.</p>
@@ -662,9 +518,9 @@
 <script>
 // ── Tab switching ──
 function switchTab(tab) {
-  document.querySelectorAll('.triage-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='quick')||(i===1&&tab==='triage')));
-  document.getElementById('quickPanel').classList.toggle('show', tab==='quick');
+  document.querySelectorAll('.triage-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='triage')||(i===1&&tab==='quick')));
   document.getElementById('triagePanel').classList.toggle('show', tab==='triage');
+  document.getElementById('quickPanel').classList.toggle('show', tab==='quick');
 }
 
 // ── Quick classify ──

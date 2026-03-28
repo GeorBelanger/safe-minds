@@ -10,7 +10,7 @@ Built for **[Championing AI for Good: Building Safer AI for Youth Mental Health]
 
 ## Overview
 
-As LLMs become embedded in everyday tools used by children and teenagers, the risk of a vulnerable young person encountering — or expressing — a mental health crisis in a chat interface becomes real. `safe-minds` is a lightweight, privacy-first pipeline that classifies risk in real time, following [Safe Messaging Guidelines](https://afsp.org/safe-messaging-guidelines/) from AFSP and Kids Help Phone.
+As LLMs become embedded in everyday tools used by children and teenagers, the risk of a vulnerable young person encountering — or expressing — a mental health crisis in a chat interface becomes real. `safe-minds` is a lightweight, privacy-first pipeline that classifies risk in real time, following [Safe Messaging Guidelines](https://afsp.org/how-to-talk-safely-about-suicide/#safe-messaging-guidelines) from AFSP and Kids Help Phone.
 
 **Key design principles:**
 - 🔒 **100% on-device** — no data sent to external APIs, no user data stored

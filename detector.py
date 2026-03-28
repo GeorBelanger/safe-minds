@@ -24,7 +24,7 @@ from enum import Enum
 from typing import Optional
 
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline, TextGenerationPipeline
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -162,9 +162,9 @@ Risk levels:
 - CRISIS: Explicit suicidal intent or imminent danger — emergency resources required
 """
 
-_pipe = None
+_pipe: TextGenerationPipeline = None
 
-def get_pipeline():
+def get_pipeline() -> TextGenerationPipeline:
     global _pipe
     if _pipe is None:
         logger.info("Loading %s ... (first run downloads ~2.4GB)", MODEL_ID)
@@ -191,7 +191,7 @@ def llm_assess(
 ) -> AssessmentResult:
     pipe = get_pipeline()
 
-    context_block = ""
+    context_block: str = ""
     if conversation_history:
         context_block = "Prior conversation context:\n"
         for turn in conversation_history[-6:]:

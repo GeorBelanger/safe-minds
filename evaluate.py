@@ -115,12 +115,12 @@ DATASETS = {
 
 def risk_to_binary(risk: RiskLevel) -> int:
     """Map our 5-level risk to binary positive (1) / negative (0)."""
-    return 1 if risk in (RiskLevel.MEDIUM, RiskLevel.HIGH, RiskLevel.CRISIS) else 0
+    return 1 if risk.requires_resources else 0
 
 
 def risk_to_binary_strict(risk: RiskLevel) -> int:
     """Strict: only HIGH and CRISIS count as positive."""
-    return 1 if risk in (RiskLevel.HIGH, RiskLevel.CRISIS) else 0
+    return 1 if risk.requires_escalation else 0
 
 
 # ---------------------------------------------------------------------------
